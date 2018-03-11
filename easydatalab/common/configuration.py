@@ -1,8 +1,6 @@
 #-*- coding: utf-8 -*-
 from __future__ import print_function
 
-from lab.common.configuration
-
 # TODO finir les tests - show - custom init - enter / exit
 class AppConfiguration:
 

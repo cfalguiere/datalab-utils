@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import unittest
 
-from lab.common.configuration import AppConfiguration
+from easydatalab.common.configuration import AppConfiguration
 
 class TestAppConfiguration(unittest.TestCase):
 
