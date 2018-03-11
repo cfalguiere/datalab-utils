@@ -1,0 +1,44 @@
+# tuto
+https://python-packaging.readthedocs.io/en/latest/
+
+# prerequis
+
+## tests sans nose
+python -m unittest easydatalab.common.app_test
+python -m unittest discover -s easydatalab/ -p "test_*.py"
+
+
+## install nose pour gérer les tests
+pip install nose
+
+## lancer les tests
+nosetest
+
+## tests en CI
+python setup.py tests
+
+ajouter dans setup.py
+      test_suite='nose.collector',
+      tests_require=['nose']
+
+--------
+
+# deployer en dev
+
+python setup.py develop
+
+# package not on pypi
+
+setup(
+    ...
+    dependency_links=['http://github.com/user/repo/tarball/master#egg=package-1.0']
+    ...
+)
+
+
+# dependances
+      install_requires=[
+          'markdown',
+      ],
+
+
