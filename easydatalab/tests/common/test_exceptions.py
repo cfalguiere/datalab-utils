@@ -6,7 +6,7 @@ import unittest
 from easydatalab.common.exceptions import ConfigurationError, ExecutionError
 
 
-class TestConfigurationError(unittest.TestCase):
+class TestExceptions(unittest.TestCase):
 
     def test_exception(self):
         with self.assertRaises(ConfigurationError) as ctx:
