@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import unittest
 
-from lab.common.exceptions import ConfigurationError, ExecutionError
+from easydatalab.common.exceptions import ConfigurationError, ExecutionError
 
 
 class TestConfigurationError(unittest.TestCase):
