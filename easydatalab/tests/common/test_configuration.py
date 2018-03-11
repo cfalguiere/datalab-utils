@@ -8,6 +8,6 @@ from easydatalab.common.configuration import AppConfiguration
 class TestAppConfiguration(unittest.TestCase):
 
     def test_constructor(self):
-        cfgFile = 'sch/mocks/app-for-unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
         appConfiguration = AppConfiguration(cfgFile)
         self.assertEqual( repr(appConfiguration), 'AppConfiguration: from=sch/mocks/app-for-unittests.cfg' )
