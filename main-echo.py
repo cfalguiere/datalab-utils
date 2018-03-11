@@ -4,32 +4,21 @@
 from __future__ import print_function
 
 import sys
-from sch.common.app import AppContext
+from easydatalab.common.app import AppContext
+from easydatalab.r.rutils import RScript
 
 def main():
     """Main entry point for the script."""
 
-    cfgFile = 'sch/mocks/app-for-unittests.cfg'
+    cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
 
     with AppContext() as appContext:
         with appContext.new_configuration(cfgFile) as appConfiguration:
-
-            with appContext.new_step ('echo') as step:
-                with step.rscript() as r:
-                    requiredParams = [ 'pathToData', 'pathToRawData', 'pathToLog' ]
-                    r.call( 'echo.R',  requiredParams )
-
-                with step.rscript() as r:
-                    requiredParams = [ 'pathToData', 'pathToRawData', 'pathToLog' ]
-                    r.call( 'echo.R',  requiredParams )
-
-            with appContext.new_step ('echo') as step:
-                with step.rscript() as r:
-                    requiredParams = [ 'pathToData', 'pathToRawData', 'pathToLog' ]
-                    r.call( 'echo.R',  requiredParams )
-
-                with step.rscript() as r:
-                    requiredParams = [ 'pathToData', 'pathToRawData', 'pathToLog' ]
+            appConfiguration.show()
+            appConfiguration.add_parameter('d1', 'val_d1')
+            with appContext.new_step('echo') as step:
+                with step.subprocess(RScript) as r:
+                    requiredParams = [ 'd1', 'PERIOD:start' ]
                     r.call( 'echo.R',  requiredParams )
 
 

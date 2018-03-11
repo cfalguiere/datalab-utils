@@ -26,6 +26,9 @@ class AppContext:
     def set_configuration(self, configuration):
         self.configuration = configuration
 
+    def get_configuration(self):
+        return self.configuration
+
     def new_step(self, stepName):
         step = AppStep(stepName, self)
         self.steps.append(step)
@@ -97,8 +100,9 @@ class AppStep:
 
        #time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
 
-    #def rscript(self):
-    #    return  RScript(self.theAppContext, self)
+    def subprocess(self, subprocessClass):
+        instance = subprocessClass(self.theAppContext, self)
+        return  instance
 
     def get_status(self):
        return self.status

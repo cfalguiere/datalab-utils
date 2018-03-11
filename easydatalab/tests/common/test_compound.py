@@ -20,6 +20,7 @@ class TestCompound(unittest.TestCase):
         cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
         with AppContext() as appContext:
              with appContext.new_configuration(cfgFile) as appConfiguration:
+                  appConfiguration.show()
                   value = appConfiguration.get_parameter('A:a1')
                   self.assertEqual( value, 'val_a1' )
                   appConfiguration.add_parameter('z1', 'val_z1')

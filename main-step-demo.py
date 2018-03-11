@@ -13,6 +13,7 @@ def main():
 
     with AppContext() as appContext:
         with appContext.new_configuration(cfgFile) as appConfiguration:
+            appConfiguration.show()
 
             with appContext.new_step ('something') as step:
                  print("does something")
