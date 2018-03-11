@@ -19,7 +19,7 @@ class ConfigurationError(Error):
         self.msg = msg
 
     def __str__(self):
-        return 'error on {0} -{1}'.format( self.expr , self.msg )
+        return 'error on {0} - {1}'.format( self.expr , self.msg )
 
 
 class ExecutionError(Error):
