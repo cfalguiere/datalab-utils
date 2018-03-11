@@ -1,3 +1,3 @@
 include README.rst
 include docs/*.txt
-include easydatalab/easydatalab.cfg
+include easydatalab/resources/easydatalab.cfg
