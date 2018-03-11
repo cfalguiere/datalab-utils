@@ -1,13 +1,17 @@
 #-*- coding: utf-8 -*-
 from __future__ import print_function
 
+from easydatalab.common.exceptions import ConfigurationError, ExecutionError
+from easydatalab.common.confloader import AppConfigurationLoader
+
 # TODO finir les tests - show - custom init - enter / exit
 class AppConfiguration:
 
       def __init__(self, cfgPath, theAppContext=None):
             self.cfgPath = cfgPath
             self.theAppContext = theAppContext
-            self.parameters = None
+            self.parameters = {}
+            self.settings = None
 
       def __repr__(self):
             return 'AppConfiguration: from={0}'.format(self.cfgPath)
@@ -16,37 +20,48 @@ class AppConfiguration:
             print( '===========================================================')
             print( "INFO - Preparing configuration"  )
             try:
-                confLoader = AppConfigurationLoader(self.cfgPath)
-                confLoader.load(self.cfgPath)
+                confLoader = AppConfigurationLoader()
+                self.settings = confLoader.load(self.cfgPath)
 
                 print('INFO - Configuration loaded from %s' % self.cfgPath)
 
-                self.custom_init()
+                self.__custom_init()
 
             except ConfigurationError as e:
-                raise ConfigurationError('Cfg File', 'error during configuration  - cfg path %s - %s' % (self.cfgPath, str(e) ) )
+                raise ConfigurationError('AppConfiguration', 'error during configuration  - cfg path %s - %s' % (self.cfgPath, str(e) ) )
 
-            print('INFO - Configuration verified')
-            self.show()
-
-            self.parameters = confLoader.get_configuration()
-            self.theAppContext.set_configuration( self )
+            if self.theAppContext:
+               self.theAppContext.set_configuration( self )
 
             print( '===========================================================')
             return self
 
       def __exit__(self, exc_type, exc_value, exc_traceback):
-             pass
+            pass
 
       def __custom_init(self):
             pass
 
+      def add_parameter(self, key, value):
+          self.parameters[key] = value
+
+      def get_parameter(self, key):
+          try:
+            if ':' in key:
+              pair = key.split(':')
+              value = self.settings.get(pair[0], pair[1])
+            else:
+              value = self.parameters[key]
+          except:
+              raise ExecutionError('AppConfiguration', 'key %s was not found' % key)
+          return value
+
       def show(self):
-            print( '-----------------------------------------------------------')
-            print( '| ')
-            print( '| CONFIGURATION')
-            print( '| ')
-            for key, value in self.parameters.items():
-                  print( '| [%s]  = %s' % (key, value) )
-            print( '-----------------------------------------------------------')
+          print( '-----------------------------------------------------------')
+          print( '| ')
+          print( '| CONFIGURATION')
+          print( '| ')
+          for key, value in self.parameters.items():
+              print( '| [%s]  = %s' % (key, value) )
+          print( '-----------------------------------------------------------')
 
