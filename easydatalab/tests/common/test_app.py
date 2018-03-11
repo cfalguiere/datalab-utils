@@ -27,4 +27,3 @@ class TestAppStep(unittest.TestCase):
         appStep = app.AppStep('STEP1', appContext)
         appStep.__enter__()
         self.assertEqual( appStep.get_status(), 'Started' )
-

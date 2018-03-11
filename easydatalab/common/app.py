@@ -3,7 +3,9 @@
 from __future__ import print_function
 
 import datetime
+import traceback
 
+from easydatalab.common.configuration import AppConfiguration
 class AppContext:
     def __init__(self, name='App'):
         self.name = name
@@ -40,8 +42,24 @@ class AppContext:
         print( '|')
         print( '| Number of steps: %s' % len(self.steps) )
         for step in self.steps:
-            print( '| {0}'.format( step.report ) )
+            print( '| {0}'.format( step.get_report() ) )
         print( '===========================================================')
+
+    def __enter__(self):
+        self.start = datetime.datetime.now()
+        print( "INFO - Starting app"  )
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+       self.end = datetime.datetime.now()
+       elapsed = self.end  - self.start
+       if exc_type == None:
+          self.status = "App Completed"
+       else:
+          traceback.print_exception(exc_type, exc_value, exc_traceback, 30)
+          self.status = "App Aborted"
+       self.report()
+       print( 'INFO - End of App')
 
 
 class AppStep:
@@ -49,7 +67,7 @@ class AppStep:
         self.stepName = stepName
         self.theAppContext = theAppContext
         self.status = "Not Started"
-        #self.report = None
+        self.report = None
 
     def __enter__(self):
         self.start = datetime.datetime.now()
@@ -70,7 +88,10 @@ class AppStep:
           print( 'ERROR - in step %s' %  (self.stepName) )
           traceback.print_exception(exc_type, exc_value, exc_traceback, 30)
           self.status = "Aborted"
-       print( "| STEP {0} - {1} in {2}.{3} seconds".format (self.stepName, self.status, elapsed.seconds, elapsed.microseconds))
+
+       template = "{0} - {1} in {2}.{3} seconds"
+       self.report = template.format(self.stepName, self.status, elapsed.seconds, elapsed.microseconds)
+       print( "| STEP {0}".format(self.report ) )
        print( '===========================================================')
        print( '| ')
 
@@ -81,6 +102,9 @@ class AppStep:
 
     def get_status(self):
        return self.status
+
+    def get_report(self):
+       return self.report
 
     def __del__(self):
         print("__del__")

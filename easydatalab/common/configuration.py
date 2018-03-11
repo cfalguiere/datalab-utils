@@ -30,8 +30,8 @@ class AppConfiguration:
             except ConfigurationError as e:
                 raise ConfigurationError('AppConfiguration', 'error during configuration  - cfg path %s - %s' % (self.cfgPath, str(e) ) )
 
-            if self.theAppContext:
-               self.theAppContext.set_configuration( self )
+            #if self.theAppContext:
+            #   self.theAppContext.set_configuration( self )
 
             print( '===========================================================')
             return self
