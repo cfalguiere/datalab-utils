@@ -9,7 +9,9 @@ from easydatalab.r.rutils import RScript
 
 def customize_fun(configuration):
     print( "customize" )
-    configuration.add_parameter('start', configuration.get_parameter('PERIOD:start'))
+    add = configuration.add_parameter
+    get = configuration.get_parameter
+    add('start', get('PERIOD:start'))
 
 def main():
     """Main entry point for the script."""
