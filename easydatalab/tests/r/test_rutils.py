@@ -17,7 +17,7 @@ class TestRScript(unittest.TestCase):
             with appContext.new_step ('echo') as step:
               with step.subprocess(RScript) as r:
                 requiredParams = [ 'PERIOD:start' ]
-                r.call( 'echo.R',  requiredParams )
+                r.call( 'echo.r',  requiredParams )
 
     def test_call_wrong_path(self):
         cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
@@ -27,9 +27,33 @@ class TestRScript(unittest.TestCase):
               with step.subprocess(RScript) as r:
                 with self.assertRaises(ExecutionError) as ctx:
                   requiredParams = [ 'x']
-                  r.call( 'echo.R',  requiredParams )
+                  r.call( 'echo.r',  requiredParams )
                   self.assertTrue('ExecutionError' in ctx.exception)
-                  self.assertEqual('ExecutionError: error in step echo - Missing parameter - x')
+                  self.assertEqual('ExecutionError: error in step echo - Missing parameter - x', str(ctx.exception))
+
+    def test_call_wrong_rscript_path(self):
+        cfgFile = 'easydatalab/tests/resources/config_for_r_wrong_rscript.cfg'
+        with AppContext() as appContext:
+          with appContext.new_configuration(cfgFile) as appConfiguration:
+            with appContext.new_step ('echo') as step:
+              with self.assertRaises(ExecutionError) as ctx:
+                with step.subprocess(RScript) as r:
+                    requiredParams = [ 'x']
+                    r.call( 'echo.r',  requiredParams )
+                    self.assertTrue('ExecutionError' in ctx.exception)
+                    self.assertEqual('ExecutionError: error in step echo - Rscript  not found at doesnotexist', str(ctx.exception))
+
+    def test_call_wrong_rcode_path(self):
+        cfgFile = 'easydatalab/tests/resources/config_for_r_wrong_rcode.cfg'
+        with AppContext() as appContext:
+          with appContext.new_configuration(cfgFile) as appConfiguration:
+            with appContext.new_step ('echo') as step:
+              with self.assertRaises(ExecutionError) as ctx:
+                with step.subprocess(RScript) as r:
+                    requiredParams = [ 'x']
+                    r.call( 'echo.r',  requiredParams )
+                    self.assertTrue('ExecutionError' in ctx.exception)
+                    self.assertEqual('ExecutionError: error in step echo - Rscript  not found at doesnotexist', str(ctx.exception))
 
     def test_get_parameters_as_map(self):
         cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'

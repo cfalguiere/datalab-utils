@@ -23,8 +23,12 @@ class RScript:
         print( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" )
         print( "| RScript {0} is starting".format(self.scriptName) )
         self.pathToRScript = self.configuration.get_parameter('PATH:rscript')
+        if not os.path.exists(self.pathToRScript):
+           raise ExecutionError(self.stepName, 'Rscript  not found at %s' % self.pathToRScript )
         print( "..........................................................." )
         self.pathToCode = self.configuration.get_parameter('PATH:rcode')
+        if not os.path.exists(self.pathToCode):
+           raise ExecutionError(self.stepName, 'Base directory to R scripts (rcode) not found at %s' % self.pathToCode )
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
