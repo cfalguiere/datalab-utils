@@ -25,7 +25,7 @@ def main():
             with appContext.new_step('echo') as step:
                 with step.subprocess(RScript) as r:
                     requiredParams = [ 'd1', 'start' ]
-                    r.call( 'echo.R',  requiredParams )
+                    r.call( 'echo.r',  requiredParams )
 
 
 
