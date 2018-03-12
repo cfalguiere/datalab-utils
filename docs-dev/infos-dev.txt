@@ -4,8 +4,8 @@ https://python-packaging.readthedocs.io/en/latest/
 # prerequis
 
 ## tests sans nose
-python -m unittest easydatalab.common.app_test
-python -m unittest discover -s easydatalab/ -p "test_*.py"
+python -m unittest easydatalab.tests.common.test_configuration
+python -m unittest discover -s easydatalab/tests/ -p "test_*.py"
 
 
 ## install nose pour gérer les tests
