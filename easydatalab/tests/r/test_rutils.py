@@ -53,7 +53,7 @@ class TestRScript(unittest.TestCase):
                     requiredParams = [ 'x']
                     r.call( 'echo.r',  requiredParams )
                     self.assertTrue('ExecutionError' in ctx.exception)
-                    self.assertEqual('ExecutionError: error in step echo - Rscript  not found at doesnotexist', str(ctx.exception))
+                    self.assertEqual('ExecutionError: error in step echo - Root of R scripts (rcode) not found at doesnotexist', str(ctx.exception))
 
     def test_get_parameters_as_map(self):
         cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
