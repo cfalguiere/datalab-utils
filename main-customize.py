@@ -7,6 +7,10 @@ import sys
 from easydatalab.common.app import AppContext
 from easydatalab.r.rutils import RScript
 
+def customize_fun(configuration):
+    print( "customize" )
+    configuration.add_parameter('start', configuration.get_parameter('PERIOD:start'))
+
 def main():
     """Main entry point for the script."""
 
@@ -14,11 +18,11 @@ def main():
 
     with AppContext() as appContext:
         with appContext.new_configuration(cfgFile) as appConfiguration:
-            appConfiguration.show()
+            appConfiguration.customize(customize_fun)
             appConfiguration.add_parameter('d1', 'val_d1')
             with appContext.new_step('echo') as step:
                 with step.subprocess(RScript) as r:
-                    requiredParams = [ 'd1' ]
+                    requiredParams = [ 'd1', 'start' ]
                     r.call( 'echo.R',  requiredParams )
 
 

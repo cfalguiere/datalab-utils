@@ -4,7 +4,6 @@ from __future__ import print_function
 from easydatalab.common.exceptions import ConfigurationError, ExecutionError
 from easydatalab.common.confloader import AppConfigurationLoader
 
-# TODO finir les tests - show - custom init - enter / exit
 class AppConfiguration:
 
       def __init__(self, cfgPath, theAppContext=None):
@@ -25,8 +24,6 @@ class AppConfiguration:
 
                 print('INFO - Configuration loaded from %s' % self.cfgPath)
 
-                self.__custom_init()
-
             except ConfigurationError as e:
                 raise ConfigurationError('AppConfiguration', 'error during configuration  - cfg path %s - %s' % (self.cfgPath, str(e) ) )
 
@@ -41,6 +38,9 @@ class AppConfiguration:
 
       def __custom_init(self):
             pass
+
+      def customize(self, f):
+          params = f(self)
 
       def add_parameter(self, key, value):
           self.parameters[key] = value

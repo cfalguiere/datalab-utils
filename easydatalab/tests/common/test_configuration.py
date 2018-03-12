@@ -6,6 +6,9 @@ import unittest
 from easydatalab.common.configuration import AppConfiguration
 from easydatalab.common.exceptions import ExecutionError
 
+def customize_fun(configuration):
+    configuration.add_parameter('a1', configuration.get_parameter('A:a1'))
+
 class TestAppConfiguration(unittest.TestCase):
 
     def test_constructor(self):
@@ -37,3 +40,10 @@ class TestAppConfiguration(unittest.TestCase):
             value = appConfiguration.get_parameter('x1')
             raise ExecutionError('AppConfiguration', 'key x1 was not found')
 
+    def test_get_parameter_loaded(self):
+        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        appConfiguration = AppConfiguration(cfgFile)
+        appConfiguration.__enter__()
+        appConfiguration.customize(customize_fun)
+        value = appConfiguration.get_parameter('a1')
+        self.assertEqual( value, 'val_a1' )
