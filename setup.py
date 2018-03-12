@@ -11,8 +11,9 @@ setup(name='easydatalab',
       author='Claude Falguiere',
       author_email='',
       license='MIT',
+
       packages=['easydatalab'],
-      include_package_data=True
+      include_package_data=True,
       zip_safe=False,
 
       test_suite='nose.collector',
