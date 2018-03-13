@@ -2,8 +2,12 @@
 """App commons"""
 from __future__ import print_function
 
+import os
 import datetime
 import traceback
+import glob
+
+from easydatalab.common.exceptions import ExecutionError
 
 from easydatalab.common.configuration import AppConfiguration
 class AppContext:
@@ -103,6 +107,24 @@ class AppStep:
     def subprocess(self, subprocessClass):
         instance = subprocessClass(self.theAppContext, self)
         return  instance
+
+    def assert_input_file(self, filePath):
+        # TODO factorisation validator
+        if '*' in filePath:
+           # lookup a matching file
+           foundMatch = False
+           for filepath_object in glob.glob(filePath):
+               if os.path.isfile(filepath_object):
+                  foundMatch = True
+           if not foundMatch:
+              msg = 'not file is matching required pattern %s' % filePath
+              raise ExecutionError('Input assertion', msg)
+        else:
+          # lookup the exact name
+          if not os.path.exists(filePath):
+              msg = 'required file %s not found' % filePath
+              raise ExecutionError('Input assertion', msg)
+
 
     def get_status(self):
        return self.status
