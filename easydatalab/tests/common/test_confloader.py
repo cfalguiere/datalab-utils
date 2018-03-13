@@ -19,4 +19,5 @@ class TestAppConfigurationLoader(unittest.TestCase):
         with self.assertRaises(ConfigurationError) as ctx:
             loader.load( cfgFile )
             raise ConfigurationError('pathToCode', 'does not exist')
+            self.assertTrue('ConfigurationError' in ctx.exception)
 
