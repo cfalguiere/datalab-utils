@@ -17,7 +17,7 @@ class TestCompound(unittest.TestCase):
                  self.assertEqual( str(step), 'echo' )
 
     def test_with_configuration(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/config_for_unittests.cfg'
         with AppContext() as appContext:
              with appContext.new_configuration(cfgFile) as appConfiguration:
                   appConfiguration.show()

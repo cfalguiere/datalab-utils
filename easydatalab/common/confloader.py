@@ -12,9 +12,16 @@ class AppConfigurationLoader:
             self.parameters = {}
 
       def load(self, path):
-          cv = PathValidator()
-          if  not cv.check_path_for_existence( path ):
-              raise ConfigurationError('PATH', 'Config file not found at %s' % path)
+          def check_item(item):
+            cv = PathValidator()
+            if  not cv.check_path_for_existence( item ):
+                raise ConfigurationError('PATH', 'Config file not found at %s' % item)
+
+          if isinstance( path, list ):
+             for p in path:
+                 check_item(p)
+          else:
+             check_item(path)
 
           self.settings = ConfigParser.SafeConfigParser()
           self.settings.read(path)

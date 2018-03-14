@@ -11,7 +11,7 @@ from easydatalab.common.exceptions import ExecutionError
 class TestRScript(unittest.TestCase):
 
     def test_call(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/r/config_for_r_unittests.cfg'
         with AppContext() as appContext:
           with appContext.new_configuration(cfgFile) as appConfiguration:
             with appContext.new_step ('echo') as step:
@@ -20,7 +20,7 @@ class TestRScript(unittest.TestCase):
                 r.call( 'echo.r',  requiredParams )
 
     def test_call_wrong_path(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/r/config_for_r_unittests.cfg'
         with AppContext() as appContext:
           with appContext.new_configuration(cfgFile) as appConfiguration:
             with appContext.new_step ('echo') as step:
@@ -32,7 +32,7 @@ class TestRScript(unittest.TestCase):
                   self.assertEqual('ExecutionError: error in step echo - Missing parameter - x', str(ctx.exception))
 
     def test_call_wrong_rscript_path(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_r_wrong_rscript.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/r/config_for_r_wrong_rscript.cfg'
         with AppContext() as appContext:
           with appContext.new_configuration(cfgFile) as appConfiguration:
             with appContext.new_step ('echo') as step:
@@ -44,7 +44,7 @@ class TestRScript(unittest.TestCase):
                     self.assertEqual('ExecutionError: error in step echo - Rscript  not found at doesnotexist', str(ctx.exception))
 
     def test_call_wrong_rcode_path(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_r_wrong_rcode.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/r/config_for_r_wrong_rcode.cfg'
         with AppContext() as appContext:
           with appContext.new_configuration(cfgFile) as appConfiguration:
             with appContext.new_step ('echo') as step:
@@ -56,7 +56,7 @@ class TestRScript(unittest.TestCase):
                     self.assertEqual('ExecutionError: error in step echo - Root of R scripts (rcode) not found at doesnotexist', str(ctx.exception))
 
     def test_get_parameters_as_map(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/r/config_for_r_unittests.cfg'
         with AppContext() as appContext:
           with appContext.new_configuration(cfgFile) as appConfiguration:
             with appContext.new_step ('echo') as step:

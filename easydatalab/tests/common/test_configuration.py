@@ -12,12 +12,12 @@ def customize_fun(configuration):
 class TestAppConfiguration(unittest.TestCase):
 
     def test_constructor(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/config_for_unittests.cfg'
         appConfiguration = AppConfiguration(cfgFile)
-        self.assertEqual( repr(appConfiguration), 'AppConfiguration: from=easydatalab/tests/resources/config_for_unittests.cfg' )
+        self.assertEqual( repr(appConfiguration), 'AppConfiguration: from=easydatalab/tests/resources/config/config_for_unittests.cfg' )
 
     def test_get_parameter_loaded(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/config_for_unittests.cfg'
         appConfiguration = AppConfiguration(cfgFile)
         appConfiguration.__enter__()
         value = appConfiguration.get_parameter('A:a1')
@@ -25,7 +25,7 @@ class TestAppConfiguration(unittest.TestCase):
 
 
     def test_get_parameter_added(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/config_for_unittests.cfg'
         appConfiguration = AppConfiguration(cfgFile)
         appConfiguration.__enter__()
         appConfiguration.add_parameter('z1', 'val_z1')
@@ -33,7 +33,7 @@ class TestAppConfiguration(unittest.TestCase):
         self.assertEqual( value, 'val_z1' )
 
     def test_get_parameter_not_found(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/config_for_unittests.cfg'
         appConfiguration = AppConfiguration(cfgFile)
         appConfiguration.__enter__()
         with self.assertRaises(ExecutionError) as ctx:
@@ -41,7 +41,7 @@ class TestAppConfiguration(unittest.TestCase):
             raise ExecutionError('AppConfiguration', 'key x1 was not found')
 
     def test_get_parameter_loaded(self):
-        cfgFile = 'easydatalab/tests/resources/config_for_unittests.cfg'
+        cfgFile = 'easydatalab/tests/resources/config/config_for_unittests.cfg'
         appConfiguration = AppConfiguration(cfgFile)
         appConfiguration.__enter__()
         appConfiguration.customize(customize_fun)
