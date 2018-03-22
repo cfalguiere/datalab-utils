@@ -6,17 +6,33 @@ import os
 import datetime
 import traceback
 import glob
+import logging.config, yaml
 
 from easydatalab.common.exceptions import ExecutionError
 
 from easydatalab.common.configuration import AppConfiguration
 class AppContext:
-    def __init__(self, name='App'):
+    logger = None
+
+    def __init__(self, name='App', log_config_file=None):
         self.name = name
         self.status = -1
         #self.attributes = {}
         self.configuration = None
         self.steps = []
+
+        self.__init_logging(log_config_file)
+
+        self.logger = logging.getLogger('common.AppContext')
+        self.logger.info('creating an instance of class AppContext')
+
+    def __init_logging(self, log_config_file):
+        if  log_config_file != None:
+          with open(log_config_file) as f:
+            log_config = yaml.load(f)
+            logging.config.dictConfig( log_config )
+            logger = logging.getLogger(self.name)
+            logger.info('log configuration loaded from %s' % log_config_file)
 
     def __str__(self):
         return self.name
@@ -75,6 +91,8 @@ class AppStep:
         self.theAppContext = theAppContext
         self.status = "Not Started"
         self.report = None
+        self.logger = logging.getLogger('common.AppStep')
+        self.logger.info('creating an instance of class AppStep')
 
     def __enter__(self):
         self.start = datetime.datetime.now()

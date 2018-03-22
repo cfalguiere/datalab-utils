@@ -3,6 +3,7 @@ from __future__ import print_function
 
 from easydatalab.common.exceptions import ConfigurationError, ExecutionError
 from easydatalab.common.confloader import AppConfigurationLoader
+import logging
 
 class AppConfiguration:
 
@@ -11,6 +12,8 @@ class AppConfiguration:
             self.theAppContext = theAppContext
             self.parameters = {}
             self.settings = None
+            self.logger = logging.getLogger('common.AppConfiguration')
+            self.logger.info('creating an instance of class AppConfiguration')
 
       def __repr__(self):
             return 'AppConfiguration: from={0}'.format(self.cfgPath)
