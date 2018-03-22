@@ -10,7 +10,7 @@ from easydatalab.r.rutils import RScript
 def main():
     """Main entry point for the script."""
 
-    cfgFile = 'easydatalab/tests/resources/config_for_r_unittests.cfg'
+    cfgFile = 'easydatalab/tests/resources/config/r/config_for_r_unittests.cfg'
 
     with AppContext() as appContext:
         with appContext.new_configuration(cfgFile) as appConfiguration:
