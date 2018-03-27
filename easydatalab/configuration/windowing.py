@@ -19,7 +19,7 @@ class Windowing:
             window_days = window_length * 30
             window_delta = timedelta(days=window_days)
 
-            available_days = nb_available_periods * 30
+            available_days = (nb_available_periods - 1) * 30
             available_delta = timedelta(days=available_days)
             self.min_available_date = (current_date - available_delta).strftime("%Y%m")
             self.max_available_date = current_period
@@ -29,7 +29,7 @@ class Windowing:
             d = current_date - staging_delta
             self.max_selected_date = d.strftime("%Y%m")
 
-            selected_days = nb_selected_periods * 30
+            selected_days = (nb_selected_periods - 1) * 30
             selected_delta = timedelta(days=selected_days)
             self.min_selected_date = (d - selected_delta).strftime("%Y%m")
 

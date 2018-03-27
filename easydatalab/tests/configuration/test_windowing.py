@@ -23,9 +23,9 @@ class TestWindowing(unittest.TestCase):
         (min_available, max_available) = w.available_periods()
         (min_selected, max_selected) = w.selected_periods()
 
-        self.assertEqual( min_available, '201711' )
+        self.assertEqual( min_available, '201712' )
         self.assertEqual( max_available, '201804' )
-        self.assertEqual( min_selected, '201711' )
+        self.assertEqual( min_selected, '201712' )
         self.assertEqual( max_selected, '201804' )
 
     def test_exception_custom_2(self):
@@ -33,7 +33,7 @@ class TestWindowing(unittest.TestCase):
         (min_available, max_available) = w.available_periods()
         (min_selected, max_selected) = w.selected_periods()
 
-        self.assertEqual( min_available, '201710' )
+        self.assertEqual( min_available, '201711' )
         self.assertEqual( max_available, '201804' )
-        self.assertEqual( min_selected, '201712' )
+        self.assertEqual( min_selected, '201801' )
         self.assertEqual( max_selected, '201803' )
