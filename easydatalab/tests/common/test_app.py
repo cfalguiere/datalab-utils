@@ -29,6 +29,13 @@ class TestAppStep(unittest.TestCase):
         appStep.__enter__()
         self.assertEqual( appStep.get_status(), 'Started' )
 
+    def test_skipped(self):
+        appContext = app.AppContext('APP')
+        appContext.skip_steps( [ 'STEP1' ] )
+        appStep = appContext.new_step('STEP1')
+        appStep.__enter__()
+        self.assertEqual( appStep.get_status(), 'Skipped' )
+
     def test_assert_input_file(self):
         appContext = app.AppContext('APP')
         appStep = app.AppStep('STEP1', appContext)

@@ -53,14 +53,20 @@ class AppContext:
     def get_configuration(self):
         return self.configuration
 
+    def skip_steps(self, skipped_step_names):
+        self.skipped_step_names = skipped_step_names
+
     def new_step(self, stepName):
         step = AppStep(stepName, self)
         self.steps.append(step)
+        if stepName in self.skipped_step_names:
+           step.skip()
         return step
 
     def new_configuration(self, cfgPath):
         self.configuration = AppConfiguration(cfgPath, self)
         return self.configuration
+
 
     def report(self):
         print( '===========================================================')
@@ -103,6 +109,8 @@ class AppStep:
         self.logger.info('creating an instance of class AppStep')
 
     def __enter__(self):
+        if self.status == "Skipped":
+          return self
         self.start = datetime.datetime.now()
         self.status = "Started"
         print( '| ')
@@ -112,6 +120,8 @@ class AppStep:
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+       if self.status == "Skipped":
+          return self
        print( '-----------------------------------------------------------')
        self.end = datetime.datetime.now()
        elapsed = self.end  - self.start
@@ -151,6 +161,8 @@ class AppStep:
               msg = 'required file %s not found' % filePath
               raise ExecutionError('Input assertion', msg)
 
+    def skip(self):
+       self.status = "Skipped"
 
     def get_status(self):
        return self.status
