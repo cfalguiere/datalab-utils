@@ -4,8 +4,8 @@ from __future__ import print_function
 
 import os
 import datetime
-import traceback
 import glob
+import traceback
 import logging.config, yaml
 
 from easydatalab.common.exceptions import ExecutionError
@@ -14,6 +14,8 @@ from easydatalab.common.exceptions import Error
 from easydatalab.common.configuration import AppConfiguration
 
 from easydatalab.monitoring.filemonitor import FileMonitor
+from easydatalab.monitoring.stepmonitor import StepMonitor
+from easydatalab.monitoring.appmonitor import AppMonitor
 
 class AppContext:
     logger = None
@@ -25,11 +27,11 @@ class AppContext:
         #self.attributes = {}
         self.configuration = None
         self.steps = []
+        self.app_monitor = AppMonitor(self)
 
         self.__init_logging(log_config_file)
 
-        self.logger = logging.getLogger('common.AppContext')
-        self.logger.info('creating an instance of class AppContext')
+        self.logger = logging.getLogger('easydatalab.common.AppContext')
 
     def __init_logging(self, log_config_file):
         if  log_config_file != None:
@@ -41,12 +43,6 @@ class AppContext:
 
     def __str__(self):
         return self.name
-
-    def set_status(self, value ):
-        self.status = value
-
-    def get_status(self):
-        return self.status
 
     def set_configuration(self, configuration):
         self.configuration = configuration
@@ -69,79 +65,51 @@ class AppContext:
         return self.configuration
 
 
-    def report(self):
-        print( '===========================================================')
-        print( '|')
-        print( '| REPORT')
-        print( '|')
-        print( '| Number of steps: %s' % len(self.steps) )
-        for step in self.steps:
-            print( '| {0}'.format( step.get_report() ) )
-        print( '===========================================================')
-
-        if  AppContext.file_monitor:
-           AppContext.file_monitor.report()
-
     def __enter__(self):
-        self.start = datetime.datetime.now()
-        print( "INFO - Starting app"  )
+        self.app_monitor.start()
         file_monitor = FileMonitor()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-       self.end = datetime.datetime.now()
-       elapsed = self.end  - self.start
+       status = None
        if exc_type == None:
-          self.status = "App Completed"
+          self.app_monitor.stop()
+          status = True
        else:
-          traceback.print_exception(exc_type, exc_value, exc_traceback, 30)
-          self.status = "App Aborted"
-       self.report()
-       print( 'INFO - End of App')
+          error_message = traceback.format_exception_only(exc_type, exc_value)[0]
+          self.app_monitor.fail(error_message)
+          status = False
+
+       self.app_monitor.report(self.steps)
+
+       return status
 
 
+#TODO TU skipped
 class AppStep:
     def __init__(self, stepName, theAppContext, skipped=False):
         self.stepName = stepName
         self.theAppContext = theAppContext
-        self.status = "Not Started"
         self.skipped = skipped
-        self.report = None
-        self.logger = logging.getLogger('common.AppStep')
-        self.logger.info('creating an instance of class AppStep')
+        self.logger = logging.getLogger('easydatalab.common.AppStep')
+        self.step_monitor = StepMonitor(self)
 
     def __enter__(self):
-        self.start = datetime.datetime.now()
-        print( '| ')
-        print( '===========================================================')
-        print( "| STEP %s is starting" % self.stepName )
-        print( '-----------------------------------------------------------')
-        if not self.skipped:
-           self.status = "Started"
+        self.step_monitor.start()
+        self.step_monitor.header()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-       print( '-----------------------------------------------------------')
-       self.end = datetime.datetime.now()
-       elapsed = self.end  - self.start
-       template = "{0} - {1} in {2}.{3} seconds"
        if exc_type == None:
-           if self.skipped:
-              self.status = 'Skipped'
-              template = "{0} - {1}"
-           else:
-              self.status = "Completed"
+           self.step_monitor.stop()
+           self.step_monitor.footer()
+           return True
        else:
-          print( 'ERROR - in step %s' %  (self.stepName) )
-          traceback.print_exception(exc_type, exc_value, exc_traceback, 30)
-          self.status = "Aborted"
+           error_message = traceback.format_exception_only(exc_type, exc_value)[0]
+           self.step_monitor.fail(error_message)
+           self.step_monitor.footer()
+           return False
 
-       self.report = template.format(self.stepName, self.status, elapsed.seconds, elapsed.microseconds)
-       print( "| STEP {0}".format(self.report ) )
-       print( '===========================================================')
-       print( '| ')
-
-       #time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
 
     def subprocess(self, subprocessClass):
         instance = subprocessClass(self.theAppContext, self)
@@ -164,14 +132,11 @@ class AppStep:
               msg = 'required file %s not found' % filePath
               raise ExecutionError('Input assertion', msg)
 
-    def get_status(self):
-       return self.status
-
-    def get_report(self):
-       return self.report
-
     def enabled(self):
        return not self.skipped
+
+    def summary(self):
+       return self.step_monitor.summary()
 
     def __del__(self):
         print("__del__")
@@ -182,21 +147,4 @@ class AppStep:
     def __str__(self):
         return self.stepName
 
-
-
-
-class SkippedStepException(Error):
-    """Exception raised to abort a skipped step.
-
-    Attributes:
-        expr -- execution item in which the error occurred
-        msg  -- explanation of the error
-    """
-
-    def __init__(self, step, msg):
-        self.step = step
-        self.msg = msg
-
-    def __str__(self):
-        return 'error in step {0} - {1}'.format( self.step , self.msg )
 

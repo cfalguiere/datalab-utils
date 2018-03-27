@@ -4,9 +4,10 @@
 from __future__ import print_function
 
 import sys
-from easydatalab.common.app import AppContext
-from easydatalab.common.app import SkippedStepException
 import logging
+
+from easydatalab.common.app import AppContext
+from easydatalab.common.exceptions import ExecutionError
 
 def main():
     """Main entry point for the script."""
@@ -28,6 +29,10 @@ def main():
             with appContext.new_step ('skipped step') as step:
                 if step.enabled():
                     print("does skipped")
+
+            with appContext.new_step ('failed step') as step:
+                if step.enabled():
+                    raise ExecutionError('step 3', 'failed to complete task')
 
             with appContext.new_step ('something else') as step:
                 if step.enabled():
