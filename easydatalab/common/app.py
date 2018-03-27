@@ -9,6 +9,7 @@ import glob
 import logging.config, yaml
 
 from easydatalab.common.exceptions import ExecutionError
+from easydatalab.common.exceptions import Error
 
 from easydatalab.common.configuration import AppConfiguration
 
@@ -54,13 +55,13 @@ class AppContext:
         return self.configuration
 
     def skip_steps(self, skipped_step_names):
+        print('INFO - will skip %s' % str(skipped_step_names) )
         self.skipped_step_names = skipped_step_names
 
     def new_step(self, stepName):
-        step = AppStep(stepName, self)
+        should_skip = stepName in self.skipped_step_names
+        step = AppStep(stepName, self, skipped = should_skip)
         self.steps.append(step)
-        if stepName in self.skipped_step_names:
-           step.skip()
         return step
 
     def new_configuration(self, cfgPath):
@@ -100,39 +101,41 @@ class AppContext:
 
 
 class AppStep:
-    def __init__(self, stepName, theAppContext):
+    def __init__(self, stepName, theAppContext, skipped=False):
         self.stepName = stepName
         self.theAppContext = theAppContext
         self.status = "Not Started"
+        self.skipped = skipped
         self.report = None
         self.logger = logging.getLogger('common.AppStep')
         self.logger.info('creating an instance of class AppStep')
 
     def __enter__(self):
-        if self.status == "Skipped":
-          return self
         self.start = datetime.datetime.now()
-        self.status = "Started"
         print( '| ')
         print( '===========================================================')
         print( "| STEP %s is starting" % self.stepName )
         print( '-----------------------------------------------------------')
+        if not self.skipped:
+           self.status = "Started"
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-       if self.status == "Skipped":
-          return self
        print( '-----------------------------------------------------------')
        self.end = datetime.datetime.now()
        elapsed = self.end  - self.start
+       template = "{0} - {1} in {2}.{3} seconds"
        if exc_type == None:
-          self.status = "Completed"
+           if self.skipped:
+              self.status = 'Skipped'
+              template = "{0} - {1}"
+           else:
+              self.status = "Completed"
        else:
           print( 'ERROR - in step %s' %  (self.stepName) )
           traceback.print_exception(exc_type, exc_value, exc_traceback, 30)
           self.status = "Aborted"
 
-       template = "{0} - {1} in {2}.{3} seconds"
        self.report = template.format(self.stepName, self.status, elapsed.seconds, elapsed.microseconds)
        print( "| STEP {0}".format(self.report ) )
        print( '===========================================================')
@@ -161,14 +164,14 @@ class AppStep:
               msg = 'required file %s not found' % filePath
               raise ExecutionError('Input assertion', msg)
 
-    def skip(self):
-       self.status = "Skipped"
-
     def get_status(self):
        return self.status
 
     def get_report(self):
        return self.report
+
+    def enabled(self):
+       return not self.skipped
 
     def __del__(self):
         print("__del__")
@@ -179,4 +182,21 @@ class AppStep:
     def __str__(self):
         return self.stepName
 
+
+
+
+class SkippedStepException(Error):
+    """Exception raised to abort a skipped step.
+
+    Attributes:
+        expr -- execution item in which the error occurred
+        msg  -- explanation of the error
+    """
+
+    def __init__(self, step, msg):
+        self.step = step
+        self.msg = msg
+
+    def __str__(self):
+        return 'error in step {0} - {1}'.format( self.step , self.msg )
 
