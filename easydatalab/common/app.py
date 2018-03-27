@@ -11,6 +11,7 @@ import logging.config, yaml
 from easydatalab.common.exceptions import ExecutionError
 
 from easydatalab.common.configuration import AppConfiguration
+
 class AppContext:
     logger = None
 
