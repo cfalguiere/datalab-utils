@@ -12,8 +12,11 @@ from easydatalab.common.exceptions import ExecutionError
 
 from easydatalab.common.configuration import AppConfiguration
 
+from easydatalab.monitoring.filemonitor import FileMonitor
+
 class AppContext:
     logger = None
+    file_monitor = None
 
     def __init__(self, name='App', log_config_file=None):
         self.name = name
@@ -69,9 +72,13 @@ class AppContext:
             print( '| {0}'.format( step.get_report() ) )
         print( '===========================================================')
 
+        if  AppContext.file_monitor:
+           AppContext.file_monitor.report()
+
     def __enter__(self):
         self.start = datetime.datetime.now()
         print( "INFO - Starting app"  )
+        file_monitor = FileMonitor()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
